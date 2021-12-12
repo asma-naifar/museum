@@ -1,119 +1,168 @@
-import * as BABYLON from "@babylonjs/core"
-import {creerCamera, creerSol, creerMateriauSimple, creerCloison, creerPoster} from "./prims"
+import * as BABYLON from "babylonjs";
+import * as OIMO from "oimo";
 
+import { createCamera } from "./camera/camera.js";
+import { createGound } from "./structure/ground.js";
+import { createBuilding } from "./structure/building.js";
+import { createInteriorSeparation } from "./structure/interiorSeparation.js";
+import { createStairs } from "./structure/stairs.js";
+import { createSecondFloor } from "./structure/secondFloor.js";
+import { createFloors } from "./structure/floor.js";
+import { createCeiling } from "./structure/ceiling.js";
 
-let canvas, engine 
-let scene, camera 
+import { createJapanesePosters } from "./posters/japanesePosters";
+import { createVermeerPosters } from "./posters/vermeerPoster";
+import { createArabicPosters } from "./posters/arabicPosters";
 
+import { createFountain } from "./structure/fountain.js";
+import {createStatue} from "./structure/statue"
 
+import {createSlindingDoors} from "./doors/slidingDoors"
 
-function createLights(){
-	let light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(5,5,5), scene) 
+import { marbleMaterial } from "./materials/stairsMaterial.js";
+
+let canvas, engine;
+let scene, camera;
+
+function createLights() {
+  let light = new BABYLON.HemisphericLight(
+    "light",
+    new BABYLON.Vector3(0, 10, 0),
+    scene
+  );
 }
 
+let isLocked = false;
 
+function set_FPS_mode(scene, canvas, camera) {
+  // On click event, request pointer lock
+  scene.onPointerDown = function (evt) {
+    //true/false check if we're locked, faster than checking pointerlock on each single click.
+    if (!isLocked) {
+      canvas.requestPointerLock =
+        canvas.requestPointerLock ||
+        canvas.msRequestPointerLock ||
+        canvas.mozRequestPointerLock ||
+        canvas.webkitRequestPointerLock ||
+        false;
+      if (canvas.requestPointerLock) {
+        canvas.requestPointerLock();
+      }
+    }
 
-function peuplerScene(){
+    //continue with shooting requests or whatever :P
+    //evt === 0 (left mouse click)
+    //evt === 1 (mouse wheel click (not scrolling))
+    //evt === 2 (right mouse click)
+  };
 
-	// Création du sol
-	let sol = creerSol("sol",{},scene) 
+  // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
+  let pointerlockchange = function () {
+    let controlEnabled =
+      document.pointerLockElement ||
+      document.mozPointerLockElement ||
+      document.webkitPointerLockElement ||
+      document.msPointerLockElement ||
+      false;
 
-	// Création d'une cloison
+    // If the user is already locked
+    if (!controlEnabled) {
+      camera.detachControl(canvas);
+      isLocked = false;
+    } else {
+      camera.attachControl(canvas);
+      setTimeout(() => {
+        isLocked = true;
+      }, 100);
+    }
+  };
 
-	let materiauRouge = creerMateriauSimple("rouge",{couleur:new BABYLON.Color3(0.8,0.1,0.1)},scene)
-
-	let materiauCloison = creerMateriauSimple("mat-cloison",{texture:"assets/textures/murs.jpg"}, scene) 
-
-	
-	let cloison = creerCloison("cloison",{hauteur:1.0,largeur:1.0,materiau:materiauRouge},scene) 
-
-	let cloison1 = creerCloison("cloison",{hauteur:3.0, largeur:5.0,materiau:materiauCloison},scene) 
-	cloison1.position = new BABYLON.Vector3(5,0,-5) 
-	cloison1.rotation.y = Math.PI 
-
-	for(let i=0; i< 10; i++){
-		let cl = creerCloison("cloison-"+i, {materiau:materiauCloison}, scene) 
-		cl.position = new BABYLON.Vector3(0,0,-5*i) 
-	} 
-
-	// Création d un tableau
-	let tableau = creerPoster("tableau1",{tableau:"assets/tableaux/Berthe.jpg"},scene) 
-	tableau.parent = cloison1  // on accroche le tableau à la cloison 
-	tableau.position.z = -0.1  
-	tableau.position.y = 1.7 
-	
-
-
-	// Création d une sphere
-	let sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:1.0}, scene) 
-
-	sphere.material = new BABYLON.StandardMaterial("materiau1", scene) 
-	
-
+  // Attach events to the document
+  document.addEventListener("pointerlockchange", pointerlockchange, false);
+  document.addEventListener("mspointerlockchange", pointerlockchange, false);
+  document.addEventListener("mozpointerlockchange", pointerlockchange, false);
+  document.addEventListener(
+    "webkitpointerlockchange",
+    pointerlockchange,
+    false
+  );
 }
 
-let isLocked = false 
-
-function set_FPS_mode(scene, canvas, camera){
-
-	// On click event, request pointer lock
-	scene.onPointerDown = function (evt) {
-
-		//true/false check if we're locked, faster than checking pointerlock on each single click.
-		if (!isLocked) {
-			canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock || false
-			if (canvas.requestPointerLock) {
-				canvas.requestPointerLock()
-			}
-		}
-
-		//continue with shooting requests or whatever :P
-		//evt === 0 (left mouse click)
-		//evt === 1 (mouse wheel click (not scrolling))
-		//evt === 2 (right mouse click)
-	};
-
-	// Event listener when the pointerlock is updated (or removed by pressing ESC for example).
-	let pointerlockchange = function () {
-		let controlEnabled = document.pointerLockElement || document.mozPointerLockElement || document.webkitPointerLockElement || document.msPointerLockElement || false
-
-		// If the user is already locked
-		if (!controlEnabled) {
-			camera.detachControl(canvas)
-			isLocked = false;
-		} else {
-			camera.attachControl(canvas)
-			setTimeout(() => {
-				isLocked = true
-			}, 100)
-
-		}
-	};
-
-	// Attach events to the document
-	document.addEventListener("pointerlockchange", pointerlockchange, false)
-	document.addEventListener("mspointerlockchange", pointerlockchange, false)
-	document.addEventListener("mozpointerlockchange", pointerlockchange, false)
-	document.addEventListener("webkitpointerlockchange", pointerlockchange, false)
-
+function setSkybox(scene) {
+  var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
+  var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+  skyboxMaterial.backFaceCulling = false;
+  skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+    "./assets/skybox/skybox",
+    scene
+  );
+  skyboxMaterial.reflectionTexture.coordinatesMode =
+    BABYLON.Texture.SKYBOX_MODE;
+  skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+  skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+  skybox.material = skyboxMaterial;
 }
 
-export function init(){
-	canvas = document.getElementById("renderCanvas") 
-	engine = new BABYLON.Engine(canvas,true) 
-	scene  = new BABYLON.Scene(engine) 
+export function init() {
+  canvas = document.getElementById("renderCanvas");
+  engine = new BABYLON.Engine(canvas, true);
+  scene = new BABYLON.Scene(engine);
 
-	camera = creerCamera("camera",{}, scene, canvas) 
+  var scene = new BABYLON.Scene(engine);
+  var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
+  var physicsPlugin = new BABYLON.OimoJSPlugin(true, {}, OIMO);
+  scene.enablePhysics(gravityVector, physicsPlugin);
 
-	
-	createLights() 
-	peuplerScene() 
+  scene.collisionsEnabled = true;
 
-	set_FPS_mode(scene, canvas,camera) 
+  camera = createCamera(scene, canvas);
+  var cameraCollider = BABYLON.Mesh.CreateBox("cameraCube", 2.5, scene)
+  cameraCollider.parent = camera
 
-	window.addEventListener("resize", function(){engine.resize();}) 
+  set_FPS_mode(scene, canvas, camera);
 
-	engine.runRenderLoop( function(){scene.render();} ) 
+  createLights();
+
+  createInteriorSeparation(scene);
+  createGound("floor", 300, 300, "./assets/textures/grass.png", scene);
+  createBuilding(scene);
+  setSkybox(scene);
+  createSecondFloor(scene);
+  createFloors(scene);
+  createCeiling(scene);
+  createJapanesePosters(scene);
+  createArabicPosters(scene);
+  createVermeerPosters(scene);
+  createFountain(scene);
+
+  let leftStairs = createStairs(3.25, 5, 6.67, scene);
+  let rightStairs = createStairs(3.3, 5, 6.67, scene);
+
+  leftStairs.position.x = -11.7;
+  leftStairs.position.z = 6.3;
+  leftStairs.position.y = 0;
+
+  rightStairs.position.x = 15;
+  rightStairs.position.z = 6.3;
+  rightStairs.position.y = 0;
+
+  leftStairs.checkCollisions = true;
+  rightStairs.checkCollisions = true;
+
+  const stairsMat = marbleMaterial(5, 5, scene);
+
+  leftStairs.material = stairsMat;
+  rightStairs.material = stairsMat;
+
+  createStatue("statue1", -10,scene);
+  createStatue("statue2", 10,scene);
+
+  createSlindingDoors(scene, cameraCollider)
+  window.addEventListener("resize", function () {
+    engine.resize();
+  });
+
+  engine.runRenderLoop(function () {
+    scene.render();
+  });
 }
-
-
