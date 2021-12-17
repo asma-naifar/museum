@@ -6,7 +6,7 @@
   </a>
 </p>
 
-> A 3D recreation of the entry hall in the National History Museum in London
+> A 3D recreation of the entry hall of a museum containig a room with traditional Japanese paintings, a room for traditional paintings by arabic artists and the last room has famous paintings of my favourite painter Johannes Vermeer.
 
 ### ✨ [Demo](http://localhost:8000/)
 
