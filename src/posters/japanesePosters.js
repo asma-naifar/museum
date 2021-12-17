@@ -1,4 +1,4 @@
-import { createPoster } from "./genericFunctions";
+import { createPoster, createAudio } from "./genericFunctions";
 
 export function createJapanesePosters(scene) {
   const poster1 = createPoster(
@@ -16,6 +16,18 @@ export function createJapanesePosters(scene) {
     "./assets/descriptions/tiger-text.jpg",
     scene
   );
+
+  
+  createAudio(
+    "tiger",
+    -8,
+    13.99,
+   0,
+    "./assets/audio/tiger-name.mp3",
+    "./assets/audio/tiger.mp3",
+    scene
+  );
+
   const poster2 = createPoster(
     "poster-2",
     "./assets/tableaux/wave.jpg",
@@ -31,6 +43,18 @@ export function createJapanesePosters(scene) {
     "./assets/descriptions/wave-text.jpg",
     scene
   );
+
+  
+  createAudio(
+    "wave",
+    -4.21,
+    6.3,
+    Math.PI / 2,
+    "./assets/audio/wave.mp3",
+    "./assets/audio/wave-description.mp3",
+    scene
+  );
+
   const poster3 = createPoster(
     "poster-3",
     "./assets/tableaux/fuji.jpg" ,
@@ -46,6 +70,17 @@ export function createJapanesePosters(scene) {
     "./assets/descriptions/fuji-text.jpg",
     scene
   );
+
+  createAudio(
+    "fuji",
+    -13.99,
+    10,
+    -Math.PI / 2,
+    "./assets/audio/lake.mp3",
+    "./assets/audio/lake-description.mp3",
+    scene
+  );
+
   poster2.rotation.y = Math.PI/2;
   poster3.rotation.y = -Math.PI/2;
 }

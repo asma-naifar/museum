@@ -82,7 +82,6 @@ export function createPoster(name, tableau, ratio, position, description, scene)
   matTextBox.ambientTexture.uScale = 1.0;
 	matTextBox.ambientTexture.vScale = 5.0;
   
-
   return group;
 
 }
@@ -209,4 +208,54 @@ function frameMaker(name, options, scene) {
   }
 
   return BABYLON.Mesh.MergeMeshes(frame, true).convertToFlatShadedMesh();
+}
+
+export function createAudio(
+  name,
+  positionX,
+  positionZ,
+  rotation,
+  audioName,
+  audioDescription,
+  scene
+) {
+
+  const test = BABYLON.MeshBuilder.CreateBox(
+    "test",
+    { width: 3, height: 4 },
+    scene
+  );
+
+  test.actionManager = new BABYLON.ActionManager(scene);
+
+  test.checkCollisions = true;
+  test.position.y = 2;
+  test.position.x = positionX;
+  test.position.z = positionZ;
+
+  const posterName = new BABYLON.Sound("name" + name, audioName, scene);
+
+  const posterDescription = new BABYLON.Sound(
+    "description" + name,
+    audioDescription,
+    scene
+  );
+
+  const musicAction1 = new BABYLON.PlaySoundAction(
+    BABYLON.ActionManager.OnDoublePickTrigger,
+    posterName
+  );
+  const musicAction2 = new BABYLON.PlaySoundAction(
+    BABYLON.ActionManager.OnLongPressTrigger,
+    posterDescription
+  );
+
+  test.actionManager.registerAction(musicAction1);
+  test.actionManager.registerAction(musicAction2);
+
+  test.rotation.y = rotation;
+  var mat = new BABYLON.StandardMaterial("mat", scene);
+	mat.alpha = 0;
+
+  test.material = mat;
 }

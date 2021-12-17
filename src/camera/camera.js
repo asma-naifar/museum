@@ -25,4 +25,5 @@ export function createCamera(scene, canvas) {
   camera.ellipsoid = new BABYLON.Vector3(1.3, 1, 1.3);
   
   return camera;
+  
 }

@@ -15,11 +15,13 @@ import { createVermeerPosters } from "./posters/vermeerPoster";
 import { createArabicPosters } from "./posters/arabicPosters";
 
 import { createFountain } from "./structure/fountain.js";
-import {createStatue} from "./structure/statue"
+import { createStatue } from "./structure/statue";
 
-import {createSlindingDoors} from "./doors/slidingDoors"
+import { createSlindingDoors } from "./doors/slidingDoors";
 
 import { marbleMaterial } from "./materials/stairsMaterial.js";
+import {createSecondFloorArt} from "./secondFloor/secondFloorStatue"
+
 
 let canvas, engine;
 let scene, camera;
@@ -116,8 +118,9 @@ export function init() {
   scene.collisionsEnabled = true;
 
   camera = createCamera(scene, canvas);
-  var cameraCollider = BABYLON.Mesh.CreateBox("cameraCube", 2.5, scene)
-  cameraCollider.parent = camera
+  var cameraCollider = BABYLON.Mesh.CreateBox("cameraCube", 1.9, scene);
+  cameraCollider.parent = camera;
+  cameraCollider.actionManager = new BABYLON.ActionManager(scene);
 
   set_FPS_mode(scene, canvas, camera);
 
@@ -133,7 +136,18 @@ export function init() {
   createJapanesePosters(scene);
   createArabicPosters(scene);
   createVermeerPosters(scene);
-  createFountain(scene);
+  const fountain = createFountain(scene);
+
+  const music = new BABYLON.Sound(
+    "backgroundMusic",
+    "./assets/audio/backgroundMusic.mp3",
+    scene,
+    function () {
+      music.play();
+    },
+    { loop: true, autoplay: true, volume: 0.2 }
+  );
+  music.attachToMesh(fountain);
 
   let leftStairs = createStairs(3.25, 5, 6.67, scene);
   let rightStairs = createStairs(3.3, 5, 6.67, scene);
@@ -154,10 +168,12 @@ export function init() {
   leftStairs.material = stairsMat;
   rightStairs.material = stairsMat;
 
-  createStatue("statue1", -10,scene);
-  createStatue("statue2", 10,scene);
+  createStatue("statue1", -10, scene);
+  createStatue("statue2", 10, scene);
 
-  createSlindingDoors(scene, cameraCollider)
+  createSlindingDoors(scene, cameraCollider);
+  createSecondFloorArt(scene)
+
   window.addEventListener("resize", function () {
     engine.resize();
   });

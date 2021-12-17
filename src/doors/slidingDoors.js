@@ -44,6 +44,11 @@ export function createSlindingDoors(scene, collider) {
   });
 
   door1KeyFrames.push({
+    frame: 0.5 *frameRate,
+    value: -10.2,
+  });
+
+  door1KeyFrames.push({
     frame: frameRate,
     value: -10.2,
   });
@@ -63,6 +68,11 @@ export function createSlindingDoors(scene, collider) {
   door2KeyFrames.push({
     frame: 0,
     value: 1,
+  });
+
+  door2KeyFrames.push({
+    frame: 0.5*frameRate,
+    value: -2.2,
   });
 
   door2KeyFrames.push({
@@ -93,6 +103,11 @@ export function createSlindingDoors(scene, collider) {
   });
 
   door3KeyFrames.push({
+    frame: 1.5 * frameRate,
+    value: 5.7,
+  });
+
+  door3KeyFrames.push({
     frame: 2 * frameRate,
     value: 8.9,
   });
@@ -102,7 +117,6 @@ export function createSlindingDoors(scene, collider) {
   door3.animations.push(door3Slide);
 
 
-  collider.actionManager = new BABYLON.ActionManager(scene);
 
   let actionDoor1 = new BABYLON.ExecuteCodeAction(
     {
@@ -113,7 +127,6 @@ export function createSlindingDoors(scene, collider) {
     },
     (evt) => {
       const anim1 = scene.beginAnimation(door1, -7, 2 * frameRate, false);
-      setTimeout(() => {anim1.stop()}, 2000);
     }
   );
 
@@ -127,7 +140,6 @@ export function createSlindingDoors(scene, collider) {
     },
     (evt) => {
       const anim2 = scene.beginAnimation(door2, 1, 2 * frameRate, false);
-      setTimeout(() => {anim2.stop()}, 2000);
     }
   );
 
@@ -140,7 +152,6 @@ export function createSlindingDoors(scene, collider) {
     },
     (evt) => {
       const anim3 = scene.beginAnimation(door3, 5.7, 2 * frameRate, false);
-      setTimeout(() => {anim3.stop()}, 3000);
     }
   );
 
